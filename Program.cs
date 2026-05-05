@@ -132,7 +132,6 @@ class program
             case 6:
 
                 Console.WriteLine("Volviendo al menu...");
-
                 break;
         }
 
@@ -145,9 +144,17 @@ class program
         Console.WriteLine("Ingrese el monto a depositar a su cuenta:");
         decimal montoDeposito = Convert.ToDecimal(Console.ReadLine());
 
-        cuenta.Saldo += montoDeposito;
+        if (montoDeposito <= 0)
+        {
+            Console.WriteLine("ERROR");
+            Console.WriteLine("Monto de deposito no valido. Intente de nuevo.");
+            return;
+        }
+        else { 
+            cuenta.Saldo += montoDeposito;
         Console.WriteLine($"La transaccion de {montoDeposito:C} sido correctamente hecha");
         cuenta.HistorialTransacciones.Add(new Transaccion("Deposito", montoDeposito, DateTime.Now, cuenta.Saldo, "Deposito en ventanilla"));
+        }
     }
 
     static void RealizarTransferencia(Cuenta cuenta, List<Cuenta> cuentas)
@@ -229,23 +236,47 @@ class program
 
                 case 1:
                     Console.WriteLine($"Su saldo actual es: {cuenta.Saldo:C}");
+                    Console.WriteLine($"Su cuenta esta: {cuenta.EstadoCuenta:C}");
 
                     break;
                 case 2:
                     Console.WriteLine("Retirar dinero");
 
+                    if(cuenta.EstadoCuenta == "Activa")
+                    {
                         RetirarDinero(cuenta);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Su cuenta no esta activa");
+                    }
 
-                    break;
+                        break;
                 case 3:
                     Console.WriteLine("Depositar");
 
-                    DepsotirarDinero(cuenta);
+                    if (cuenta.EstadoCuenta == "Activa")
+                    {
+                        DepsotirarDinero(cuenta);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Su cuenta no esta activa");
+                    }
+
 
                     break;
                 case 4:
                     Console.WriteLine("Transferencia");
-                    RealizarTransferencia(cuenta, cuentas);
+
+                    if (cuenta.EstadoCuenta == "Activa")
+                    {
+                        RealizarTransferencia(cuenta, cuentas);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Su cuenta no esta activa");
+                    }
 
                     break;
                 case 5:
@@ -287,7 +318,8 @@ class program
             new Cuenta("555555555", "Carlos Sanchez", "4321", 500.00m, "Activa"),
             new Cuenta("111111111", "Ana Gomez", "8765", 1500.00m, "Activa"),
             new Cuenta("222222222", "Luis Ramirez", "2468", 3000.00m, "Activa"),
-            new Cuenta("333333333", "Sofia Torres", "1357", 750.00m, "Activa")
+            new Cuenta("333333333", "Sofia Torres", "1357", 750.00m, "Activa"),
+            new Cuenta("444444444", "Diego Fernandez", "8642", 2000.00m, "Activa") 
 
 
         };
