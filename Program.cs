@@ -9,7 +9,27 @@ class program
         Console.WriteLine("Ingrese su numero de cuenta:");
         string numeroCuenta = Console.ReadLine(); 
         Console.WriteLine("Ingrese su contraseña:");
-        string Pin = Console.ReadLine();
+        string Pin = "";
+        ConsoleKeyInfo tecla;
+
+        do
+        {
+            tecla = Console.ReadKey(intercept: true);
+             if (tecla.Key != ConsoleKey.Enter && tecla.Key != ConsoleKey.Backspace)
+            {
+                Pin += tecla.KeyChar;
+                Console.Write("*");
+            }
+            else if (tecla.Key == ConsoleKey.Backspace && Pin.Length > 0)
+            {
+                Pin = Pin.Substring(0, Pin.Length - 1);
+                Console.Write("\b \b"); 
+            }
+
+        }while (tecla.Key != ConsoleKey.Enter);
+
+        Console.WriteLine();
+
 
         foreach (Cuenta cuenta in cuentas)
         {
@@ -43,8 +63,14 @@ class program
         Console.WriteLine("6. Salir");
 
 
-        int opcion = Convert.ToInt32(Console.ReadLine());   
+        if (!int.TryParse(Console.ReadLine(), out int opcion))
+        {
+            Console.WriteLine("ERROR");
+            Console.WriteLine("Opcion no valida. Intente de nuevo.");
+            return;
+        }
         
+
         switch (opcion)
         {
             case 1:
@@ -142,8 +168,11 @@ class program
     {
 
         Console.WriteLine("Ingrese el monto a depositar a su cuenta:");
-        decimal montoDeposito = Convert.ToDecimal(Console.ReadLine());
-
+        if (!decimal.TryParse(Console.ReadLine(), out decimal montoDeposito))
+        {
+            Console.WriteLine("Monto no valido. Ingrese un numero.");
+            return;
+        }
         if (montoDeposito <= 0)
         {
             Console.WriteLine("ERROR");
@@ -164,17 +193,30 @@ class program
         string numeroCuentaDestinatario = Console.ReadLine();
 
         bool CuentaT_Encontrada = false;
+        bool MismaCuentaT = false;
+
 
         foreach (Cuenta cuentaTercero in cuentas)
         {
-            if (numeroCuentaDestinatario == cuentaTercero.NumeroCuenta)
+            if (numeroCuentaDestinatario == cuentaTercero.NumeroCuenta && numeroCuentaDestinatario != cuenta.NumeroCuenta)
             {
                 CuentaT_Encontrada = true;
 
                 Console.WriteLine($"Le transferira a {cuentaTercero.Nombre}");
 
                 Console.WriteLine("Ingrese el monto a transferir:");
-                decimal montoTransferencia = Convert.ToDecimal(Console.ReadLine());
+                if (!decimal.TryParse(Console.ReadLine(), out decimal montoTransferencia))
+                {
+                    Console.WriteLine("Monto no valido. Ingrese un numero.");
+                    return;
+                }
+
+                if (montoTransferencia <= 0)
+                {
+                    Console.WriteLine("ERROR");
+                    Console.WriteLine("Monto de transferencia no valido. Intente de nuevo.");
+                    return;
+                }
 
                 if (cuenta.Saldo >= montoTransferencia)
                 {
@@ -183,20 +225,36 @@ class program
                     Console.WriteLine($"La transaccion de {montoTransferencia:C} sido correctamente hecha");
                     cuenta.HistorialTransacciones.Add(new Transaccion("Transferencia", montoTransferencia, DateTime.Now, cuenta.Saldo, $"Transferencia a {cuentaTercero.Nombre}"));
                 }
+
                 else
                 {
                     Console.WriteLine("ERROR");
                     Console.WriteLine("Saldo insuficiente para realizar la transferencia.");
                 }
 
+
+            }
+            else if (numeroCuentaDestinatario == cuenta.NumeroCuenta)
+            {
+                MismaCuentaT = true;
+
+
             }
 
-        }
-        if (!CuentaT_Encontrada)
-        {
-            Console.WriteLine("Numero de cuenta destinatario no encontrado. Intente de nuevo.");
+
 
         }
+
+        if (!CuentaT_Encontrada && !MismaCuentaT)
+        {
+            Console.WriteLine("Numero de cuenta destinatario no encontrado. Intente de nuevo.");
+        }
+        else if (MismaCuentaT)
+        {
+            Console.WriteLine("No se puede transferir a la misma cuenta. Intente de nuevo.");
+        }
+
+
     }
 
 
@@ -215,7 +273,7 @@ class program
     {
 
         Console.WriteLine("Bienvenido al cajero automático");
-        Console.WriteLine("Numero de cuenta"+cuenta.NumeroCuenta);
+        Console.WriteLine("Numero de cuenta" +cuenta.NumeroCuenta);
 
         bool salir = false;
         while (!salir)
@@ -229,14 +287,19 @@ class program
             Console.WriteLine("5. Ver historial de transacciones");
             Console.WriteLine("6. Salir");
 
-            int opcion = Convert.ToInt32(Console.ReadLine());
+            if (!int.TryParse(Console.ReadLine(), out int opcion))
+            {
+                Console.WriteLine("ERROR");
+                Console.WriteLine("Opcion no valida. Intente de nuevo.");
+                continue;
+            }
 
             switch (opcion)
             {
 
                 case 1:
                     Console.WriteLine($"Su saldo actual es: {cuenta.Saldo:C}");
-                    Console.WriteLine($"Su cuenta esta: {cuenta.EstadoCuenta:C}");
+                    Console.WriteLine($"Su cuenta esta: {cuenta.EstadoCuenta}");
 
                     break;
                 case 2:
