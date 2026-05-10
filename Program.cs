@@ -164,7 +164,7 @@ class program
 
     }
 
-    static void DepsotirarDinero(Cuenta cuenta)
+    static void DepositarDinero(Cuenta cuenta)
     {
 
         Console.WriteLine("Ingrese el monto a depositar a su cuenta:");
@@ -320,7 +320,7 @@ class program
 
                     if (cuenta.EstadoCuenta == "Activa")
                     {
-                        DepsotirarDinero(cuenta);
+                        DepositarDinero(cuenta);
                     }
                     else
                     {
